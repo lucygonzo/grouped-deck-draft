@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Problem – Grouped</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: #080a0e;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    min-height: 100vh;
+    font-family: 'Space Grotesk', sans-serif;
+    padding: 40px 24px;
+  }
+
+  .slide {
+    width: 1200px;
+    background: #0d0f14;
+    border-radius: 12px;
+    padding: 44px 56px 44px;
+    position: relative;
+  }
+
+  .slide::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at 50% -10%, rgba(245,166,35,0.06) 0%, transparent 60%);
+    pointer-events: none;
+    border-radius: 12px;
+  }
+
+  /* TOP BAR */
+  .top-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 28px;
+  }
+  .brand { display: flex; align-items: center; gap: 10px; }
+  .brand-dot {
+    width: 22px; height: 22px; background: #f5a623; border-radius: 5px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 10px; font-weight: 800; color: #0d0f14; font-family: 'Syne', sans-serif;
+  }
+  .brand-name {
+    font-family: 'Syne', sans-serif; font-size: 13px; font-weight: 700;
+    color: rgba(255,255,255,0.35); letter-spacing: 0.02em;
+  }
+  .slide-label {
+    font-size: 11px; font-weight: 600; color: rgba(255,255,255,0.2);
+    letter-spacing: 0.12em; text-transform: uppercase;
+  }
+
+  /* HEADLINE */
+  .headline-block { margin-bottom: 30px; }
+  .headline {
+    font-family: 'Syne', sans-serif; font-size: 34px; font-weight: 800;
+    color: #fff; line-height: 1.1; letter-spacing: -0.02em;
+  }
+  .headline span { color: #f5a623; }
+  .sub {
+    font-size: 14px; color: rgba(255,255,255,0.38); margin-top: 8px;
+    font-weight: 400; max-width: 560px; line-height: 1.5;
+  }
+
+  /* MAIN LAYOUT — left col fixed, right col grows */
+  .content-area {
+    display: grid;
+    grid-template-columns: 260px 1fr;
+    gap: 40px;
+    align-items: start;
+  }
+
+  /* ── FUNNEL (left, sticky) ── */
+  .funnel-outer {
+    position: sticky;
+    top: 40px;
+    width: 100%;
+    height: 390px;
+  }
+
+  .funnel-sections-stack {
+    position: absolute; inset: 0;
+    display: flex; flex-direction: column;
+    justify-content: center; align-items: center; gap: 3px;
+  }
+
+  .fsec { position: relative; cursor: pointer; }
+  .fsec svg { display: block; }
+
+  .fsec .inner-label {
+    position: absolute; top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center; pointer-events: none;
+  }
+  .fsec .tier-tag {
+    font-size: 8.5px; font-weight: 700; letter-spacing: 0.15em;
+    text-transform: uppercase; color: rgba(255,255,255,0.28);
+    display: block; transition: color 0.3s ease;
+  }
+  .fsec .tier-name {
+    font-family: 'Syne', sans-serif; font-size: 12.5px; font-weight: 800;
+    color: rgba(255,255,255,0.5); display: block; margin-top: 1px;
+    transition: color 0.3s ease; white-space: nowrap;
+  }
+
+  .fsec svg polygon { transition: opacity 0.3s ease; }
+
+  .funnel-sections-stack.has-hover .fsec:not(.hovered) svg polygon { opacity: 0.25; }
+  .funnel-sections-stack.has-hover .fsec.hovered svg polygon { opacity: 1; }
+  .funnel-sections-stack.has-hover .fsec.hovered .tier-tag { color: rgba(245,166,35,0.85); }
+  .funnel-sections-stack.has-hover .fsec.hovered .tier-name { color: #fff; }
+  .funnel-sections-stack.has-hover .fsec:not(.hovered) .tier-tag,
+  .funnel-sections-stack.has-hover .fsec:not(.hovered) .tier-name { color: rgba(255,255,255,0.12); }
+
+  /* ── RIGHT SIDE ── */
+  .panels-wrap {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  /* PANEL */
+  .panel {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 10px;
+    cursor: pointer;
+    position: relative;
+    transition: border-color 0.3s ease, background 0.3s ease;
+  }
+
+  .panel::before {
+    content: '';
+    position: absolute; left: 0; top: 0; bottom: 0; width: 3px;
+    background: #f5a623; opacity: 0; transition: opacity 0.3s ease;
+    border-radius: 2px 0 0 2px;
+    pointer-events: none;
+  }
+
+  /* Dimmed = not active when something else is */
+  .panel { opacity: 1; transition: opacity 0.3s ease, border-color 0.3s ease, background 0.3s ease; }
+  .panel.dimmed { opacity: 0.38; }
+
+  .panel.active {
+    opacity: 1;
+    background: rgba(245,166,35,0.04);
+    border-color: rgba(245,166,35,0.22);
+  }
+  .panel.active::before { opacity: 1; }
+
+  /* PANEL HEADER */
+  .panel-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    padding: 13px 16px 11px;
+    gap: 10px;
+    user-select: none;
+  }
+
+  .panel-header-left {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    flex: 1;
+    min-width: 0;
+  }
+
+  .panel-header-top {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .panel-tag {
+    font-size: 9px; font-weight: 700; letter-spacing: 0.14em;
+    text-transform: uppercase; color: rgba(245,166,35,0.55);
+    flex-shrink: 0; transition: color 0.3s ease;
+  }
+  .panel.active .panel-tag { color: #f5a623; }
+
+  .panel-divider {
+    width: 1px; height: 12px;
+    background: rgba(255,255,255,0.1); flex-shrink: 0;
+  }
+
+  .panel-title {
+    font-family: 'Syne', sans-serif; font-size: 13px; font-weight: 700;
+    color: rgba(255,255,255,0.5); transition: color 0.3s ease;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .panel.active .panel-title { color: #fff; }
+
+  .panel-one-thing {
+    font-size: 11px;
+    color: rgba(255,255,255,0.32);
+    line-height: 1.45;
+    font-weight: 400;
+    transition: color 0.3s ease;
+  }
+  .panel.active .panel-one-thing { color: rgba(255,255,255,0.58); }
+
+  /* PLUS BUTTON */
+  .plus-btn {
+    width: 24px; height: 24px; border-radius: 6px;
+    background: rgba(245,166,35,0.08); border: 1px solid rgba(245,166,35,0.18);
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0; cursor: pointer;
+    color: rgba(245,166,35,0.7); font-size: 16px; line-height: 1; font-weight: 300;
+    transition: background 0.2s ease, transform 0.3s ease, color 0.2s ease, opacity 0.3s ease;
+    opacity: 0.3;
+  }
+  .panel.active .plus-btn { opacity: 1; color: #f5a623; }
+  .panel.expanded .plus-btn {
+    transform: rotate(45deg);
+    background: rgba(245,166,35,0.15);
+    border-color: rgba(245,166,35,0.35);
+  }
+
+  /* EXPANDABLE BODY */
+  .panel-body {
+    display: grid;
+    grid-template-rows: 0fr;
+    transition: grid-template-rows 0.35s ease;
+  }
+  .panel.expanded .panel-body {
+    grid-template-rows: 1fr;
+  }
+  .panel-body-inner {
+    overflow: hidden;
+  }
+  .panel-body-content {
+    padding: 4px 16px 16px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+
+  /* TOP separator inside body */
+  .body-top-rule {
+    height: 1px;
+    background: rgba(255,255,255,0.06);
+    margin-bottom: 14px;
+  }
+
+  /* PAIN ROW */
+  .pain-row {
+    display: grid;
+    grid-template-columns: 92px 1fr;
+    gap: 12px;
+    align-items: start;
+    padding: 10px 0;
+  }
+
+  .pain-row + .pain-row {
+    border-top: 1px solid rgba(255,255,255,0.05);
+  }
+
+  /* STAT CARD */
+  .stat-card {
+    background: rgba(0,0,0,0.35);
+    border-radius: 8px;
+    padding: 10px 8px;
+    text-align: center;
+    border: 1px solid rgba(255,255,255,0.06);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    min-height: 64px;
+  }
+
+  .panel.active .stat-card { border-color: rgba(245,166,35,0.1); }
+
+  .stat-number {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800; line-height: 1; letter-spacing: -0.02em;
+  }
+  .stat-number.xl { font-size: 28px; }
+  .stat-number.lg { font-size: 18px; }
+  .stat-number.md { font-size: 14px; }
+
+  .stat-number.amber { color: #f5a623; }
+  .stat-number.orange { color: #ff8c42; }
+  .stat-number.red { color: #ff4d4d; }
+  .stat-number.purple { color: #c084ff; }
+
+  .stat-label {
+    font-size: 7.5px; font-weight: 600; letter-spacing: 0.06em;
+    text-transform: uppercase; color: rgba(255,255,255,0.28); line-height: 1.4;
+  }
+
+  /* PAIN DESCRIPTION */
+  .pain-desc { display: flex; flex-direction: column; gap: 3px; padding-top: 2px; }
+
+  .pain-title {
+    font-size: 11.5px; font-weight: 600;
+    color: rgba(255,255,255,0.7); line-height: 1.35;
+  }
+  .panel.active .pain-title { color: rgba(255,255,255,0.9); }
+
+  .pain-body {
+    font-size: 10.5px; color: rgba(255,255,255,0.38);
+    line-height: 1.55; margin-top: 1px;
+  }
+  .panel.active .pain-body { color: rgba(255,255,255,0.5); }
+
+  /* KICKER */
+  .kicker {
+    margin-top: 6px;
+    padding: 13px 20px;
+    background: rgba(245,166,35,0.07);
+    border: 1px solid rgba(245,166,35,0.18);
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: space-between;
+    opacity: 0; transform: translateY(5px);
+    transition: opacity 0.35s ease, transform 0.35s ease;
+    pointer-events: none;
+  }
+  .kicker.visible { opacity: 1; transform: translateY(0); pointer-events: all; }
+  .kicker-text { font-size: 13px; font-weight: 600; color: #f5a623; font-family: 'Syne', sans-serif; }
+  .kicker-sub { font-size: 11px; color: rgba(255,255,255,0.3); font-style: italic; }
+</style>
+</head>
+<body>
+
+<div class="slide">
+  <div class="top-bar">
+    <div class="brand">
+      <div class="brand-dot">G</div>
+      <span class="brand-name">Grouped · Firebird</span>
+    </div>
+    <span class="slide-label">The Problem</span>
+  </div>
+
+  <div class="headline-block">
+    <div class="headline">The current fan journey <span>is broken.</span></div>
+    <div class="sub">You're doing everything right — but you're not growing. Here's why.</div>
+  </div>
+
+  <div class="content-area">
+
+    <!-- FUNNEL -->
+    <div class="funnel-outer">
+      <div class="funnel-sections-stack" id="funnelStack">
+
+        <div class="fsec" id="fsec-top" data-id="top">
+          <svg width="240" height="122" viewBox="0 0 240 122" fill="none">
+            <polygon points="20,0 220,0 187,119 53,119"
+              fill="rgba(245,166,35,0.11)" stroke="rgba(245,166,35,0.28)" stroke-width="1"/>
+          </svg>
+          <div class="inner-label">
+            <span class="tier-tag">Top of Funnel</span>
+            <span class="tier-name">Discovery</span>
+          </div>
+        </div>
+
+        <div class="fsec" id="fsec-mid" data-id="mid">
+          <svg width="200" height="122" viewBox="0 0 200 122" fill="none">
+            <polygon points="16,0 184,0 155,119 45,119"
+              fill="rgba(245,166,35,0.08)" stroke="rgba(245,166,35,0.18)" stroke-width="1"/>
+          </svg>
+          <div class="inner-label">
+            <span class="tier-tag">Middle of Funnel</span>
+            <span class="tier-name">Reaching Fans</span>
+          </div>
+        </div>
+
+        <div class="fsec" id="fsec-bot" data-id="bot">
+          <svg width="162" height="122" viewBox="0 0 162 122" fill="none">
+            <polygon points="14,0 148,0 118,119 44,119"
+              fill="rgba(245,166,35,0.05)" stroke="rgba(245,166,35,0.11)" stroke-width="1"/>
+          </svg>
+          <div class="inner-label">
+            <span class="tier-tag">Bottom of Funnel</span>
+            <span class="tier-name">Community</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- PANELS -->
+    <div class="panels-wrap">
+
+      <!-- TOP -->
+      <div class="panel" id="panel-top" data-id="top">
+        <div class="panel-header">
+          <div class="panel-header-left">
+            <div class="panel-header-top">
+              <span class="panel-tag">Top of Funnel</span>
+              <div class="panel-divider"></div>
+              <span class="panel-title">Discovery → True Fan</span>
+            </div>
+            <div class="panel-one-thing">The gap from casual listener to real fan is bigger now than it's ever been.</div>
+          </div>
+          <div class="plus-btn" id="plus-top">+</div>
+        </div>
+        <div class="panel-body">
+          <div class="panel-body-inner">
+            <div class="panel-body-content">
+              <div class="body-top-rule"></div>
+
+              <div class="pain-row">
+                <div class="stat-card">
+                  <div class="stat-number xl amber">5%</div>
+                  <div class="stat-label">of followers see your post</div>
+                </div>
+                <div class="pain-desc">
+                  <div class="pain-title">Platforms bury you from your own fans</div>
+                  <div class="pain-body">95% of people who already chose you never get the message. Discovery is borrowed — you never own the line.</div>
+                </div>
+              </div>
+
+              <div class="pain-row">
+                <div class="stat-card">
+                  <div class="stat-number lg orange" style="line-height:1.2">No<br>bridge</div>
+                  <div class="stat-label">from listen to loyalty</div>
+                </div>
+                <div class="pain-desc">
+                  <div class="pain-title">No path from "heard of you" to "showing up for you"</div>
+                  <div class="pain-body">The gap from casual listener to real fan is wider than ever — and nothing in your current stack is closing it.</div>
+                </div>
+              </div>
+
+              <div class="pain-row">
+                <div class="stat-card">
+                  <div class="stat-number lg red">4,600</div>
+                  <div class="stat-label">new artists enter daily</div>
+                </div>
+                <div class="pain-desc">
+                  <div class="pain-title">Discovery platforms own the relationship — not you</div>
+                  <div class="pain-body">Spotify, TikTok, Instagram surface you — then keep the fan. You leave every discovery moment empty-handed.</div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- MID -->
+      <div class="panel" id="panel-mid" data-id="mid">
+        <div class="panel-header">
+          <div class="panel-header-left">
+            <div class="panel-header-top">
+              <span class="panel-tag">Middle of Funnel</span>
+              <div class="panel-divider"></div>
+              <span class="panel-title">Reaching Your Fans</span>
+            </div>
+            <div class="panel-one-thing">The more you grow, the more expensive it gets — you're being punished for growth.</div>
+          </div>
+          <div class="plus-btn" id="plus-mid">+</div>
+        </div>
+        <div class="panel-body">
+          <div class="panel-body-inner">
+            <div class="panel-body-content">
+              <div class="body-top-rule"></div>
+
+              <div class="pain-row">
+                <div class="stat-card">
+                  <div class="stat-number xl red">~20%</div>
+                  <div class="stat-label">email open rate</div>
+                </div>
+                <div class="pain-desc">
+                  <div class="pain-title">Tools built for broadcasting, not belonging</div>
+                  <div class="pain-body">Email, SMS, paid ads — every channel was designed for mass reach. The ones who open get blasted like strangers, not fans.</div>
+                </div>
+              </div>
+
+              <div class="pain-row">
+                <div class="stat-card">
+                  <div class="stat-number lg orange">$5–10K</div>
+                  <div class="stat-label">per release, promo spend</div>
+                </div>
+                <div class="pain-desc">
+                  <div class="pain-title">The more you grow, the more you pay</div>
+                  <div class="pain-body">Every platform bill scales with your audience size. Growth should compound your returns — instead it compounds your costs.</div>
+                </div>
+              </div>
+
+              <div class="pain-row">
+                <div class="stat-card">
+                  <div class="stat-number md purple" style="line-height:1.3">Trust<br>eroded</div>
+                  <div class="stat-label">from forced transactions</div>
+                </div>
+                <div class="pain-desc">
+                  <div class="pain-title">Every forced transaction pushes fans further away</div>
+                  <div class="pain-body">Because nothing sticks, every release has to convert. Fans feel sold to — not connected — and disengage over time.</div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- BOT -->
+      <div class="panel" id="panel-bot" data-id="bot">
+        <div class="panel-header">
+          <div class="panel-header-left">
+            <div class="panel-header-top">
+              <span class="panel-tag">Bottom of Funnel</span>
+              <div class="panel-divider"></div>
+              <span class="panel-title">Building Community</span>
+            </div>
+            <div class="panel-one-thing">You can't go from "just discovered me" to "join my community" — that nurturing has to happen first.</div>
+          </div>
+          <div class="plus-btn" id="plus-bot">+</div>
+        </div>
+        <div class="panel-body">
+          <div class="panel-body-inner">
+            <div class="panel-body-content">
+              <div class="body-top-rule"></div>
+
+              <div class="pain-row">
+                <div class="stat-card">
+                  <div class="stat-number xl red">$9</div>
+                  <div class="stat-label">/mo ask with no nurture first</div>
+                </div>
+                <div class="pain-desc">
+                  <div class="pain-title">You can't skip the journey and expect community</div>
+                  <div class="pain-body">You can't go from "hey, you just discovered me" to "join my community." That leap doesn't land without the relationship being earned first.</div>
+                </div>
+              </div>
+
+              <div class="pain-row">
+                <div class="stat-card">
+                  <div class="stat-number lg orange" style="line-height:1.2">No<br>floor</div>
+                  <div class="stat-label">fans have nowhere to land</div>
+                </div>
+                <div class="pain-desc">
+                  <div class="pain-title">The nurturing gap — nobody's filling it</div>
+                  <div class="pain-body">Between follower and true fan is a long stretch of relationship-building. Without a system pulling people deeper, most fans stall at follower and drift.</div>
+                </div>
+              </div>
+
+              <div class="pain-row">
+                <div class="stat-card">
+                  <div class="stat-number lg red">Reset.</div>
+                  <div class="stat-label">every single release</div>
+                </div>
+                <div class="pain-desc">
+                  <div class="pain-title">No foundation means no compounding</div>
+                  <div class="pain-body">Every release starts from near zero. New fans have nowhere to land and nothing to anchor them. You're not growing — you're refilling.</div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- KICKER -->
+      <div class="kicker" id="kicker">
+        <span class="kicker-text" id="kicker-text">You're doing everything right. The funnel is just working against you.</span>
+        <span class="kicker-sub" id="kicker-sub">That's where Grouped comes in.</span>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+  const IDS = ['top', 'mid', 'bot'];
+  const stack = document.getElementById('funnelStack');
+
+  // State
+  let hovered = null;   // currently mouse-hovered tier
+  let locked  = null;   // currently expanded tier (stays active even on mouse-leave)
+
+  const kickerCopy = {
+    top: { text: 'The journey from discovery to true fan has never been longer.', sub: 'Every algorithm is working to keep them on their platform — not yours.' },
+    mid: { text: 'The more you grow, the more you pay. Growth is being used against you.', sub: 'Tools built for media companies are not tools built for artists.' },
+    bot: { text: "Real community can't be launched. It has to emerge — with the right nurturing.", sub: "That gap between discovery and belonging? That's exactly where Grouped lives." }
+  };
+
+  /* ── RENDER based on state ── */
+  function render() {
+    const active = hovered || locked;
+
+    // Funnel
+    if (active) {
+      stack.classList.add('has-hover');
+      IDS.forEach(id => {
+        document.getElementById('fsec-' + id).classList.toggle('hovered', id === active);
+      });
+    } else {
+      stack.classList.remove('has-hover');
+      IDS.forEach(id => document.getElementById('fsec-' + id).classList.remove('hovered'));
+    }
+
+    // Panels
+    IDS.forEach(id => {
+      const panel = document.getElementById('panel-' + id);
+      panel.classList.remove('active', 'dimmed');
+      if (active) {
+        if (id === active) panel.classList.add('active');
+        else panel.classList.add('dimmed');
+      }
+    });
+
+    // Kicker
+    const kicker = document.getElementById('kicker');
+    if (active) {
+      document.getElementById('kicker-text').textContent = kickerCopy[active].text;
+      document.getElementById('kicker-sub').textContent = kickerCopy[active].sub;
+      kicker.classList.add('visible');
+    } else {
+      kicker.classList.remove('visible');
+    }
+  }
+
+  /* ── HOVER on funnel segments ── */
+  IDS.forEach(id => {
+    const fsec = document.getElementById('fsec-' + id);
+    fsec.addEventListener('mouseenter', () => { hovered = id; render(); });
+    fsec.addEventListener('mouseleave', () => { hovered = null; render(); });
+  });
+
+  /* ── HOVER on panels ── */
+  IDS.forEach(id => {
+    const panel = document.getElementById('panel-' + id);
+    panel.addEventListener('mouseenter', () => { hovered = id; render(); });
+    panel.addEventListener('mouseleave', () => { hovered = null; render(); });
+  });
+
+  /* ── PLUS button: click to expand/collapse, lock active ── */
+  IDS.forEach(id => {
+    const btn = document.getElementById('plus-' + id);
+
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const panel = document.getElementById('panel-' + id);
+      const isExpanded = panel.classList.contains('expanded');
+
+      // Collapse all
+      IDS.forEach(s => document.getElementById('panel-' + s).classList.remove('expanded'));
+
+      if (isExpanded) {
+        // Was expanded — collapse and unlock
+        locked = null;
+      } else {
+        // Expand this one and lock
+        panel.classList.add('expanded');
+        locked = id;
+      }
+      render();
+    });
+  });
+</script>
+
+</body>
+</html>
