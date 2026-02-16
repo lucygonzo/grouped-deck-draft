@@ -3,26 +3,110 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>The Problem – Grouped</title>
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+<title>Grouped – Customer Overview</title>
 <style>
+  /* Local fonts: GroupedFont.otf + tt-commons-cufonfonts/ in fonts/ folder */
+  @font-face {
+    font-family: 'Grouped';
+    src: url('fonts/GroupedFont.otf') format('opentype');
+    font-weight: 400 800;
+    font-style: normal;
+    font-display: swap;
+  }
+  @font-face {
+    font-family: 'TT Commons';
+    src: url('fonts/tt-commons-cufonfonts/TT%20Commons%20Regular.otf') format('opentype');
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+  }
+  @font-face {
+    font-family: 'TT Commons';
+    src: url('fonts/tt-commons-cufonfonts/TT%20Commons%20Medium.otf') format('opentype');
+    font-weight: 500;
+    font-style: normal;
+    font-display: swap;
+  }
+  @font-face {
+    font-family: 'TT Commons';
+    src: url('fonts/tt-commons-cufonfonts/TT%20Commons%20DemiBold.otf') format('opentype');
+    font-weight: 600;
+    font-style: normal;
+    font-display: swap;
+  }
+  @font-face {
+    font-family: 'TT Commons';
+    src: url('fonts/tt-commons-cufonfonts/TT%20Commons%20Bold.otf') format('opentype');
+    font-weight: 700;
+    font-style: normal;
+    font-display: swap;
+  }
+
+  /* Typography system — scaled for fuller page fill */
+  :root {
+    --font-heading: 'Grouped', sans-serif;
+    --font-body: 'TT Commons', sans-serif;
+    --text-2xl: 32px;
+    --text-xl: 22px;
+    --text-lg: 16px;
+    --text-base: 15px;
+    --text-sm: 14px;
+    --text-xs: 13px;
+    --text-2xs: 12px;
+    --text-3xs: 10px;
+    --text-micro: 9px;
+    --leading-tight: 1.1;
+    --leading-snug: 1.25;
+    --leading-normal: 1.45;
+    --leading-relaxed: 1.5;
+    --leading-loose: 1.55;
+    --tracking-tight: -0.02em;
+    --tracking-wide: 0.02em;
+    --tracking-wider: 0.06em;
+    --tracking-widest: 0.12em;
+    --tracking-uppercase: 0.14em;
+  }
+
   * { margin: 0; padding: 0; box-sizing: border-box; }
 
+  html { scroll-behavior: smooth; }
   body {
     background: #080a0e;
-    display: flex;
-    align-items: flex-start;
-    justify-content: center;
+    font-family: var(--font-body);
+    font-size: var(--text-base);
+    line-height: var(--leading-relaxed);
+    overflow: hidden;
+    height: 100vh;
+  }
+
+  /* Deck scroll container */
+  #deck {
+    position: relative;
+    z-index: 1;
+    height: 100vh;
+    overflow-y: auto;
+    overflow-x: hidden;
+    scroll-snap-type: y mandatory;
+    scrollbar-width: none;
+  }
+  #deck::-webkit-scrollbar { display: none; }
+
+  .slide-section {
     min-height: 100vh;
-    font-family: 'Space Grotesk', sans-serif;
-    padding: 40px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    scroll-snap-align: start;
+    scroll-snap-stop: always;
+    padding: 44px 32px;
   }
 
   .slide {
     width: 1200px;
+    max-width: 100%;
     background: #0d0f14;
     border-radius: 12px;
-    padding: 44px 56px 44px;
+    padding: 48px 60px 48px;
     position: relative;
   }
 
@@ -40,40 +124,55 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 28px;
+    margin-bottom: 24px;
   }
   .brand { display: flex; align-items: center; gap: 10px; }
   .brand-dot {
     width: 22px; height: 22px; background: #f5a623; border-radius: 5px;
     display: flex; align-items: center; justify-content: center;
-    font-size: 10px; font-weight: 800; color: #0d0f14; font-family: 'Syne', sans-serif;
+    font-family: var(--font-heading);
+    font-size: 10px; font-weight: 800; color: #0d0f14;
   }
   .brand-name {
-    font-family: 'Syne', sans-serif; font-size: 13px; font-weight: 700;
-    color: rgba(255,255,255,0.35); letter-spacing: 0.02em;
+    font-family: var(--font-heading);
+    font-size: var(--text-sm); font-weight: 700;
+    color: rgba(255,255,255,0.35);
+    letter-spacing: var(--tracking-wide);
   }
   .slide-label {
-    font-size: 11px; font-weight: 600; color: rgba(255,255,255,0.2);
-    letter-spacing: 0.12em; text-transform: uppercase;
+    font-family: var(--font-body);
+    font-size: var(--text-2xs); font-weight: 600;
+    color: rgba(255,255,255,0.2);
+    letter-spacing: var(--tracking-widest);
+    text-transform: uppercase;
   }
 
   /* HEADLINE */
-  .headline-block { margin-bottom: 30px; }
+  .headline-block { margin-bottom: 24px; }
   .headline {
-    font-family: 'Syne', sans-serif; font-size: 34px; font-weight: 800;
-    color: #fff; line-height: 1.1; letter-spacing: -0.02em;
+    font-family: var(--font-heading);
+    font-size: clamp(32px, 4.5vw, 42px);
+    font-weight: 800;
+    line-height: var(--leading-tight);
+    letter-spacing: var(--tracking-tight);
+    color: #fff;
   }
   .headline span { color: #f5a623; }
   .sub {
-    font-size: 14px; color: rgba(255,255,255,0.38); margin-top: 8px;
-    font-weight: 400; max-width: 560px; line-height: 1.5;
+    font-family: var(--font-body);
+    font-size: clamp(15px, 1.8vw, 17px);
+    font-weight: 400;
+    line-height: var(--leading-relaxed);
+    color: rgba(255,255,255,0.42);
+    margin-top: 10px;
+    max-width: 640px;
   }
 
   /* MAIN LAYOUT — left col fixed, right col grows */
   .content-area {
     display: grid;
-    grid-template-columns: 260px 1fr;
-    gap: 40px;
+    grid-template-columns: minmax(260px, 300px) 1fr;
+    gap: 48px;
     align-items: start;
   }
 
@@ -100,22 +199,36 @@
     text-align: center; pointer-events: none;
   }
   .fsec .tier-tag {
-    font-size: 8.5px; font-weight: 700; letter-spacing: 0.15em;
-    text-transform: uppercase; color: rgba(255,255,255,0.28);
-    display: block; transition: color 0.3s ease;
+    font-family: var(--font-body);
+    font-size: var(--text-3xs); font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.32);
+    display: block;
+    transition: color 0.3s ease;
   }
   .fsec .tier-name {
-    font-family: 'Syne', sans-serif; font-size: 12.5px; font-weight: 800;
-    color: rgba(255,255,255,0.5); display: block; margin-top: 1px;
-    transition: color 0.3s ease; white-space: nowrap;
+    font-family: var(--font-heading);
+    font-size: var(--text-sm); font-weight: 800;
+    line-height: var(--leading-snug);
+    color: rgba(255,255,255,0.55);
+    display: block; margin-top: 2px;
+    transition: color 0.3s ease;
+    white-space: nowrap;
   }
 
   .fsec svg polygon { transition: opacity 0.3s ease; }
 
+  #funnelStack.has-hover .fsec:not(.hovered) svg polygon,
   .funnel-sections-stack.has-hover .fsec:not(.hovered) svg polygon { opacity: 0.25; }
+  #funnelStack.has-hover .fsec.hovered svg polygon,
   .funnel-sections-stack.has-hover .fsec.hovered svg polygon { opacity: 1; }
+  #funnelStack.has-hover .fsec.hovered .tier-tag,
   .funnel-sections-stack.has-hover .fsec.hovered .tier-tag { color: rgba(245,166,35,0.85); }
+  #funnelStack.has-hover .fsec.hovered .tier-name,
   .funnel-sections-stack.has-hover .fsec.hovered .tier-name { color: #fff; }
+  #funnelStack.has-hover .fsec:not(.hovered) .tier-tag,
+  #funnelStack.has-hover .fsec:not(.hovered) .tier-name,
   .funnel-sections-stack.has-hover .fsec:not(.hovered) .tier-tag,
   .funnel-sections-stack.has-hover .fsec:not(.hovered) .tier-name { color: rgba(255,255,255,0.12); }
 
@@ -129,11 +242,11 @@
   /* PANEL */
   .panel {
     background: rgba(255,255,255,0.03);
-    border: 1px solid rgba(255,255,255,0.06);
-    border-radius: 10px;
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 12px;
     cursor: pointer;
     position: relative;
-    transition: border-color 0.3s ease, background 0.3s ease;
+    transition: border-color 0.3s ease, background 0.3s ease, box-shadow 0.3s ease;
   }
 
   .panel::before {
@@ -145,24 +258,29 @@
   }
 
   /* Dimmed = not active when something else is */
-  .panel { opacity: 1; transition: opacity 0.3s ease, border-color 0.3s ease, background 0.3s ease; }
-  .panel.dimmed { opacity: 0.38; }
+  .panel { opacity: 1; transition: opacity 0.3s ease, border-color 0.3s ease, background 0.3s ease, box-shadow 0.3s ease; }
+  .panel.dimmed { opacity: 0.45; }
 
   .panel.active {
     opacity: 1;
-    background: rgba(245,166,35,0.04);
-    border-color: rgba(245,166,35,0.22);
+    background: rgba(245,166,35,0.06);
+    border-color: rgba(245,166,35,0.24);
   }
   .panel.active::before { opacity: 1; }
+  .panel.expanded {
+    border-color: rgba(245,166,35,0.22);
+    box-shadow: 0 4px 24px rgba(0,0,0,0.2);
+  }
 
-  /* PANEL HEADER */
+  /* PANEL HEADER — clickable to expand/collapse */
   .panel-header {
     display: flex;
     align-items: flex-start;
     justify-content: space-between;
-    padding: 13px 16px 11px;
-    gap: 10px;
+    padding: 16px 20px 14px;
+    gap: 12px;
     user-select: none;
+    cursor: pointer;
   }
 
   .panel-header-left {
@@ -180,9 +298,13 @@
   }
 
   .panel-tag {
-    font-size: 9px; font-weight: 700; letter-spacing: 0.14em;
-    text-transform: uppercase; color: rgba(245,166,35,0.55);
-    flex-shrink: 0; transition: color 0.3s ease;
+    font-family: var(--font-body);
+    font-size: var(--text-3xs); font-weight: 700;
+    letter-spacing: var(--tracking-uppercase);
+    text-transform: uppercase;
+    color: rgba(245,166,35,0.55);
+    flex-shrink: 0;
+    transition: color 0.3s ease;
   }
   .panel.active .panel-tag { color: #f5a623; }
 
@@ -192,52 +314,60 @@
   }
 
   .panel-title {
-    font-family: 'Syne', sans-serif; font-size: 13px; font-weight: 700;
-    color: rgba(255,255,255,0.5); transition: color 0.3s ease;
+    font-family: var(--font-heading);
+    font-size: var(--text-base); font-weight: 700;
+    line-height: var(--leading-snug);
+    color: rgba(255,255,255,0.55);
+    transition: color 0.3s ease;
     white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
   }
   .panel.active .panel-title { color: #fff; }
 
   .panel-one-thing {
-    font-size: 11px;
-    color: rgba(255,255,255,0.32);
-    line-height: 1.45;
+    font-family: var(--font-body);
+    font-size: var(--text-sm);
     font-weight: 400;
+    line-height: var(--leading-relaxed);
+    color: rgba(255,255,255,0.38);
     transition: color 0.3s ease;
   }
-  .panel.active .panel-one-thing { color: rgba(255,255,255,0.58); }
+  .panel.active .panel-one-thing { color: rgba(255,255,255,0.65); }
 
   /* PLUS BUTTON */
   .plus-btn {
-    width: 24px; height: 24px; border-radius: 6px;
+    font-family: var(--font-body);
+    font-size: 18px; font-weight: 300; line-height: 1;
+    width: 28px; height: 28px; border-radius: 8px;
     background: rgba(245,166,35,0.08); border: 1px solid rgba(245,166,35,0.18);
     display: flex; align-items: center; justify-content: center;
     flex-shrink: 0; cursor: pointer;
-    color: rgba(245,166,35,0.7); font-size: 16px; line-height: 1; font-weight: 300;
-    transition: background 0.2s ease, transform 0.3s ease, color 0.2s ease, opacity 0.3s ease;
-    opacity: 0.3;
+    color: rgba(245,166,35,0.6);
+    transition: background 0.2s ease, transform 0.3s ease, color 0.2s ease, opacity 0.3s ease, border-color 0.2s ease;
+    opacity: 0.5;
   }
-  .panel.active .plus-btn { opacity: 1; color: #f5a623; }
+  .panel:hover .plus-btn,
+  .panel.active .plus-btn { opacity: 0.9; color: #f5a623; }
   .panel.expanded .plus-btn {
     transform: rotate(45deg);
     background: rgba(245,166,35,0.15);
     border-color: rgba(245,166,35,0.35);
   }
 
-  /* EXPANDABLE BODY */
+  /* EXPANDABLE BODY — accordion collapse/expand */
   .panel-body {
     display: grid;
     grid-template-rows: 0fr;
-    transition: grid-template-rows 0.35s ease;
+    transition: grid-template-rows 0.4s ease;
   }
   .panel.expanded .panel-body {
     grid-template-rows: 1fr;
   }
   .panel-body-inner {
     overflow: hidden;
+    min-height: 0;
   }
   .panel-body-content {
-    padding: 4px 16px 16px 16px;
+    padding: 6px 20px 20px 20px;
     display: flex;
     flex-direction: column;
     gap: 0;
@@ -253,10 +383,10 @@
   /* PAIN ROW */
   .pain-row {
     display: grid;
-    grid-template-columns: 92px 1fr;
-    gap: 12px;
+    grid-template-columns: 100px 1fr;
+    gap: 16px;
     align-items: start;
-    padding: 10px 0;
+    padding: 12px 0;
   }
 
   .pain-row + .pain-row {
@@ -266,27 +396,29 @@
   /* STAT CARD */
   .stat-card {
     background: rgba(0,0,0,0.35);
-    border-radius: 8px;
-    padding: 10px 8px;
+    border-radius: 10px;
+    padding: 12px 10px;
     text-align: center;
     border: 1px solid rgba(255,255,255,0.06);
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 4px;
-    min-height: 64px;
+    gap: 6px;
+    min-height: 72px;
   }
 
   .panel.active .stat-card { border-color: rgba(245,166,35,0.1); }
 
   .stat-number {
-    font-family: 'Syne', sans-serif;
-    font-weight: 800; line-height: 1; letter-spacing: -0.02em;
+    font-family: var(--font-heading);
+    font-weight: 800;
+    line-height: 1;
+    letter-spacing: var(--tracking-tight);
   }
-  .stat-number.xl { font-size: 28px; }
-  .stat-number.lg { font-size: 18px; }
-  .stat-number.md { font-size: 14px; }
+  .stat-number.xl { font-size: clamp(24px, 3vw, 32px); }
+  .stat-number.lg { font-size: clamp(18px, 2vw, 22px); }
+  .stat-number.md { font-size: var(--text-base); }
 
   .stat-number.amber { color: #f5a623; }
   .stat-number.orange { color: #ff8c42; }
@@ -294,29 +426,38 @@
   .stat-number.purple { color: #c084ff; }
 
   .stat-label {
-    font-size: 7.5px; font-weight: 600; letter-spacing: 0.06em;
-    text-transform: uppercase; color: rgba(255,255,255,0.28); line-height: 1.4;
+    font-family: var(--font-body);
+    font-size: var(--text-3xs); font-weight: 600;
+    letter-spacing: var(--tracking-wider);
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.32);
+    line-height: 1.4;
   }
 
   /* PAIN DESCRIPTION */
   .pain-desc { display: flex; flex-direction: column; gap: 3px; padding-top: 2px; }
 
   .pain-title {
-    font-size: 11.5px; font-weight: 600;
-    color: rgba(255,255,255,0.7); line-height: 1.35;
+    font-family: var(--font-body);
+    font-size: var(--text-sm); font-weight: 600;
+    line-height: var(--leading-snug);
+    color: rgba(255,255,255,0.75);
   }
   .panel.active .pain-title { color: rgba(255,255,255,0.9); }
 
   .pain-body {
-    font-size: 10.5px; color: rgba(255,255,255,0.38);
-    line-height: 1.55; margin-top: 1px;
+    font-family: var(--font-body);
+    font-size: var(--text-xs);
+    line-height: var(--leading-relaxed);
+    color: rgba(255,255,255,0.42);
+    margin-top: 2px;
   }
-  .panel.active .pain-body { color: rgba(255,255,255,0.5); }
+  .panel.active .pain-body { color: rgba(255,255,255,0.55); }
 
   /* KICKER */
   .kicker {
-    margin-top: 6px;
-    padding: 13px 20px;
+    margin-top: 0;
+    padding: 16px 24px;
     background: rgba(245,166,35,0.07);
     border: 1px solid rgba(245,166,35,0.18);
     border-radius: 8px;
@@ -326,13 +467,712 @@
     pointer-events: none;
   }
   .kicker.visible { opacity: 1; transform: translateY(0); pointer-events: all; }
-  .kicker-text { font-size: 13px; font-weight: 600; color: #f5a623; font-family: 'Syne', sans-serif; }
-  .kicker-sub { font-size: 11px; color: rgba(255,255,255,0.3); font-style: italic; }
+  .kicker-text {
+    font-family: var(--font-heading);
+    font-size: var(--text-base); font-weight: 600;
+    color: #f5a623;
+  }
+  .kicker-sub {
+    font-family: var(--font-body);
+    font-size: var(--text-sm);
+    color: rgba(255,255,255,0.4);
+    font-style: italic;
+  }
+
+  /* ── SLIDE 2: Problem Setup ── */
+  #problem-setup.slide-section {
+    padding: 0;
+    align-items: stretch;
+  }
+  #problem-setup .ps-wrap {
+    width: 100%;
+    min-height: 100vh;
+    position: relative;
+    overflow: hidden;
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: auto 1fr;
+    grid-template-areas:
+      "header"
+      "content";
+    gap: 0;
+    padding: 44px 64px 52px;
+  }
+
+  /* Content — centered, very legible */
+  #problem-setup .ps-content {
+    grid-area: content;
+    position: relative;
+    z-index: 1;
+    align-self: center;
+    justify-self: center;
+    text-align: center;
+    max-width: 640px;
+    padding: 0 24px;
+  }
+  #problem-setup .ps-headline {
+    font-family: var(--font-heading);
+    font-size: clamp(34px, 5vw, 52px);
+    font-weight: 800;
+    line-height: 1.15;
+    letter-spacing: var(--tracking-tight);
+    color: #fff;
+    margin-bottom: 24px;
+  }
+  #problem-setup .ps-headline span {
+    color: #f5a623;
+  }
+  #problem-setup .ps-sub {
+    font-family: var(--font-body);
+    font-size: clamp(16px, 2vw, 18px);
+    font-weight: 400;
+    line-height: 1.6;
+    color: rgba(255,255,255,0.78);
+  }
+
+  /* Header */
+  #problem-setup .ps-header {
+    grid-area: header;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: relative;
+    z-index: 1;
+    margin-bottom: 0;
+  }
+  #problem-setup .ps-brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  #problem-setup .ps-brand .ps-logo-sm {
+    width: 28px; height: 28px;
+    background: #f5a623;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--font-heading);
+    font-size: 12px; font-weight: 800; color: #0d0f14;
+  }
+  #problem-setup .ps-brand .ps-name {
+    font-family: var(--font-heading);
+    font-size: 15px; font-weight: 700;
+    color: rgba(255,255,255,0.35);
+    letter-spacing: var(--tracking-wide);
+  }
+  #problem-setup .ps-label {
+    font-family: var(--font-body);
+    font-size: var(--text-2xs); font-weight: 600;
+    color: rgba(255,255,255,0.2);
+    letter-spacing: var(--tracking-widest);
+    text-transform: uppercase;
+  }
+
+  /* Slide 3 (Problem): base #0F1318; full-bleed like slides 1–2; header same position */
+  #problem.slide-section {
+    position: relative;
+    z-index: 2;
+    background: transparent;
+    padding: 0;
+    align-items: stretch;
+  }
+  #problem .slide {
+    width: 100%;
+    max-width: none;
+    background: transparent;
+    border-radius: 0;
+    padding: 44px 64px 52px;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+  }
+  #problem .slide::before { display: none; }
+  #problem .top-bar {
+    flex-shrink: 0;
+    margin-bottom: 24px;
+  }
+  #problem .headline-block {
+    flex-shrink: 0;
+    margin-bottom: 28px;
+  }
+  #problem .content-area {
+    flex: 1;
+    min-height: 0;
+    align-items: stretch;
+  }
+  /* Funnel + panel rows: each section copy matches its funnel segment */
+  #problem .problem-funnel-grid {
+    display: grid;
+    grid-template-columns: minmax(260px, 300px) 1fr;
+    grid-template-rows: 1fr 1fr 1fr auto;
+    gap: 16px 48px;
+    align-items: stretch;
+  }
+  #problem .funnel-panel-row {
+    display: contents;
+  }
+  #problem .funnel-cell {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100px;
+  }
+  #problem .funnel-cell .fsec {
+    width: 100%;
+    max-width: 280px;
+  }
+  #problem .funnel-cell .fsec svg {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+  #problem .panel-cell {
+    display: flex;
+    align-items: stretch;
+    min-height: 120px;
+  }
+  #problem .panel-cell .panel {
+    flex: 1;
+    min-width: 0;
+  }
+  /* Closed cards: improved spacing and sizing */
+  #problem .panel:not(.expanded) .panel-header {
+    padding: 20px 24px 20px;
+    gap: 14px;
+  }
+  #problem .panel:not(.expanded) .panel-header-left {
+    gap: 8px;
+  }
+  #problem .panel:not(.expanded) .panel-title {
+    font-size: var(--text-lg);
+  }
+  #problem .panel:not(.expanded) .panel-one-thing {
+    font-size: var(--text-base);
+    line-height: 1.5;
+    color: rgba(255,255,255,0.45);
+  }
+  /* Panel backgrounds match funnel segment colors (top=lightest, bottom=darkest) */
+  #problem #panel-top {
+    background: rgba(245,166,35,0.05);
+    border-color: rgba(245,166,35,0.12);
+  }
+  #problem #panel-mid {
+    background: rgba(245,166,35,0.04);
+    border-color: rgba(245,166,35,0.1);
+  }
+  #problem #panel-bot {
+    background: rgba(55,65,80,0.25);
+    border-color: rgba(245,166,35,0.1);
+  }
+  #problem .funnel-kicker-row {
+    grid-column: 1 / -1;
+    margin-top: 28px;
+  }
+  #problem .headline {
+    font-size: clamp(34px, 4.5vw, 48px);
+  }
+  #problem .sub {
+    font-size: clamp(16px, 2vw, 18px);
+    max-width: 640px;
+  }
+
+  @media (max-width: 900px) {
+    #problem-setup .ps-content { max-width: none; padding-left: 16px; padding-right: 16px; }
+  }
+
+  /* Simple content slides */
+  .slide-centered .headline-block { text-align: center; margin-bottom: 36px; }
+  .slide-centered .headline { max-width: none; }
+  .slide-centered .sub { margin-left: auto; margin-right: auto; }
+  .value-list { display: flex; flex-direction: column; gap: 16px; }
+  .value-item {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 10px;
+    padding: 18px 20px;
+    display: grid;
+    grid-template-columns: 32px 1fr;
+    gap: 14px;
+    align-items: start;
+  }
+  .value-item .value-num {
+    font-family: var(--font-heading);
+    font-size: var(--text-base); font-weight: 800;
+    color: #f5a623;
+  }
+  .value-item .value-title {
+    font-family: var(--font-heading);
+    font-size: var(--text-lg); font-weight: 700;
+    line-height: var(--leading-snug);
+    color: #fff;
+    margin-bottom: 4px;
+  }
+  .value-item .value-body {
+    font-family: var(--font-body);
+    font-size: var(--text-sm);
+    line-height: var(--leading-relaxed);
+    color: rgba(255,255,255,0.5);
+  }
+  .step-list { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; margin-top: 20px; }
+  .step-card {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 10px;
+    padding: 24px;
+    text-align: center;
+  }
+  .step-card .step-num {
+    font-family: var(--font-heading);
+    font-size: var(--text-2xl); font-weight: 800;
+    color: #f5a623;
+    margin-bottom: 12px;
+  }
+  .step-card .step-title {
+    font-family: var(--font-heading);
+    font-size: var(--text-base); font-weight: 700;
+    line-height: var(--leading-snug);
+    color: #fff;
+    margin-bottom: 8px;
+  }
+  .step-card .step-body {
+    font-family: var(--font-body);
+    font-size: var(--text-xs);
+    line-height: var(--leading-relaxed);
+    color: rgba(255,255,255,0.45);
+  }
+  .feature-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; margin-top: 20px; }
+  .feature-item {
+    font-family: var(--font-body);
+    font-size: var(--text-sm);
+    line-height: var(--leading-normal);
+    color: rgba(255,255,255,0.7);
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 10px;
+    padding: 16px 18px;
+  }
+  .feature-item strong { color: #f5a623; }
+  .stat-row { display: flex; flex-wrap: wrap; gap: 24px; margin-top: 24px; justify-content: center; }
+  .stat-pill {
+    background: rgba(245,166,35,0.08);
+    border: 1px solid rgba(245,166,35,0.2);
+    border-radius: 10px;
+    padding: 16px 24px;
+    text-align: center;
+  }
+  .stat-pill .num {
+    font-family: var(--font-heading);
+    font-size: 24px; font-weight: 800;
+    color: #f5a623;
+  }
+  .stat-pill .lbl {
+    font-family: var(--font-body);
+    font-size: var(--text-2xs);
+    letter-spacing: var(--tracking-wider);
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.45);
+    margin-top: 4px;
+  }
+  .cta-block { text-align: center; margin-top: 32px; }
+  .cta-block .cta-line {
+    font-family: var(--font-heading);
+    font-size: var(--text-xl); font-weight: 700;
+    color: #f5a623;
+    margin-bottom: 8px;
+  }
+  .cta-block .cta-sub {
+    font-family: var(--font-body);
+    font-size: var(--text-sm);
+    color: rgba(255,255,255,0.45);
+  }
+
+  /* Nav */
+  .deck-nav {
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: rgba(13,15,20,0.95);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 10px;
+    padding: 8px 12px;
+    z-index: 100;
+    pointer-events: none;
+  }
+  .deck-nav .nav-btn {
+    font-family: var(--font-body);
+    font-size: 18px; line-height: 1;
+    pointer-events: all;
+    width: 36px; height: 36px;
+    border-radius: 8px;
+    border: 1px solid rgba(255,255,255,0.12);
+    background: rgba(255,255,255,0.05);
+    color: rgba(255,255,255,0.7);
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: background 0.2s, color 0.2s;
+  }
+  .deck-nav .nav-btn:hover { background: rgba(245,166,35,0.15); color: #f5a623; }
+  .deck-nav .nav-btn:disabled { opacity: 0.35; cursor: default; }
+  .deck-nav .nav-btn:disabled:hover { background: rgba(255,255,255,0.05); color: rgba(255,255,255,0.7); }
+  .deck-nav .nav-dots { display: flex; gap: 6px; align-items: center; }
+  .deck-nav .nav-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    background: rgba(255,255,255,0.2);
+    transition: background 0.2s, transform 0.2s;
+  }
+  .deck-nav .nav-dot:hover { background: rgba(255,255,255,0.4); }
+  .deck-nav .nav-dot.active { background: #f5a623; transform: scale(1.25); }
+  .deck-nav .nav-counter {
+    font-family: var(--font-body);
+    font-size: var(--text-2xs);
+    color: rgba(255,255,255,0.35);
+    min-width: 36px;
+    text-align: center;
+  }
+
+  /* Fixed radial overlay: slides 1 & 2 only; centered; circles 2x on slide 2, G spins out */
+  #radial-overlay {
+    position: fixed;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: min(90vmin, 560px);
+    height: min(90vmin, 560px);
+    pointer-events: none;
+    z-index: 1;
+    transition: opacity 0.4s ease;
+  }
+  #radial-overlay.hidden {
+    opacity: 0;
+    visibility: hidden;
+  }
+
+  /* Slide 1 & 2 bg layers: behind overlay so circles show above background */
+  .title-slide-bg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 100vh;
+    background: #1E232A;
+    z-index: 0;
+    pointer-events: none;
+  }
+  .ps-slide-bg {
+    position: absolute;
+    top: 100vh;
+    left: 0;
+    right: 0;
+    height: 100vh;
+    background: #1E232A;
+    z-index: 0;
+    pointer-events: none;
+  }
+  .problem-slide-bg {
+    position: absolute;
+    top: 200vh;
+    left: 0;
+    right: 0;
+    height: 100vh;
+    background: #0F1318;
+    z-index: 0;
+    pointer-events: none;
+  }
+  .title-slide-content {
+    position: relative;
+    z-index: 2;
+  }
+  .ps-slide-content {
+    position: relative;
+    z-index: 2;
+  }
+  #radial-overlay .radial-overlay-inner {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 100%;
+    height: 100%;
+    transform: translate(-50%, -50%);
+    transition: transform 0.5s ease;
+  }
+  #radial-overlay.on-slide-2 .radial-overlay-inner {
+    transform: translate(-50%, -50%) scale(2);
+  }
+  /* Slide 3: rings expand to reveal slide; innermost circle fills as base */
+  #radial-overlay.on-slide-3 .radial-overlay-inner {
+    transform: translate(-50%, -50%) scale(4.2);
+    transition: transform 0.7s ease;
+  }
+  #radial-overlay .radial-overlay-logo-wrap {
+    transition: transform 0.55s ease, opacity 0.5s ease;
+  }
+  #radial-overlay .radial-overlay-circle {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    border-radius: 50%;
+    transform-origin: 50% 50%;
+    aspect-ratio: 1;
+  }
+  #radial-overlay .radial-overlay-circle-1 {
+    width: 148.56%;
+    transform: translate(-50%, -50%);
+    background: rgba(26, 35, 44, 0.29);
+    animation: title-wave 1.8s ease-in-out infinite;
+  }
+  #radial-overlay .radial-overlay-circle-2 {
+    width: 109.84%;
+    transform: translate(-50%, -50%);
+    background: rgba(31, 42, 53, 0.54);
+    animation: title-wave 1.8s ease-in-out 0.2s infinite;
+  }
+  #radial-overlay .radial-overlay-circle-3 {
+    width: 71.12%;
+    transform: translate(-50%, -50%);
+    background: rgba(34, 46, 58, 0.8);
+    animation: title-wave 1.8s ease-in-out 0.4s infinite;
+  }
+  /* Innermost circle: expands on slide 3 to clear way for copy, base #0F1318 */
+  #radial-overlay .radial-overlay-circle-4 {
+    width: 48%;
+    transform: translate(-50%, -50%) scale(0.3);
+    background: #0F1318;
+    opacity: 0;
+    transition: transform 0.8s ease, opacity 0.5s ease;
+  }
+  #radial-overlay.on-slide-3 .radial-overlay-circle-4 {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(5);
+  }
+  #radial-overlay .radial-overlay-logo-wrap {
+    position: absolute;
+    width: 253px;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+  }
+  #radial-overlay.on-slide-2 .radial-overlay-logo-wrap,
+  #radial-overlay.on-slide-3 .radial-overlay-logo-wrap {
+    transform: translate(-50%, -50%) scale(0.15) rotate(360deg);
+    opacity: 0;
+  }
+  #radial-overlay .radial-overlay-logo {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+
+  /* Title slide (Figma hero layout) */
+  #title.slide-section {
+    padding: 0;
+    align-items: stretch;
+  }
+  #title .title-slide-wrap {
+    width: 100%;
+    min-height: 100vh;
+    position: relative;
+    overflow: hidden;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: auto 1fr auto;
+    grid-template-areas:
+      "header header"
+      "headline ."
+      "bottom-left bottom-right";
+    gap: 0;
+    padding: 44px 64px 52px;
+  }
+
+  @keyframes title-wave {
+    0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+    50% { transform: translate(-50%, -50%) scale(1.06); opacity: 0.85; }
+  }
+  #title .title-header {
+    grid-area: header;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: relative;
+    z-index: 1;
+    margin-bottom: 24px;
+  }
+  #title .title-brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  #title .title-brand .title-logo {
+    width: 28px;
+    height: 28px;
+    background: #f5a623;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-heading);
+    font-size: 12px;
+    font-weight: 800;
+    color: #0d0f14;
+  }
+  #title .title-brand .title-name {
+    font-family: var(--font-heading);
+    font-size: 15px;
+    font-weight: 700;
+    color: #f5a623;
+    letter-spacing: var(--tracking-wide);
+  }
+  #title .title-proprietary {
+    font-family: var(--font-body);
+    font-size: var(--text-2xs);
+    font-weight: 400;
+    color: rgba(255,255,255,0.35);
+  }
+  #title .title-headline-block {
+    grid-area: headline;
+    position: relative;
+    z-index: 1;
+    align-self: center;
+    max-width: 420px;
+  }
+  #title .title-headline {
+    font-family: var(--font-heading);
+    font-size: clamp(28px, 4vw, 42px);
+    font-weight: 800;
+    line-height: 1.15;
+    letter-spacing: var(--tracking-tight);
+    color: #f5a623;
+  }
+  #title .title-bottom-left {
+    grid-area: bottom-left;
+    position: relative;
+    z-index: 1;
+    align-self: end;
+    max-width: 380px;
+  }
+  #title .title-bottom-left .title-sub {
+    font-family: var(--font-body);
+    font-size: var(--text-sm);
+    font-weight: 400;
+    line-height: var(--leading-relaxed);
+    color: rgba(255,255,255,0.45);
+  }
+  #title .title-bottom-right {
+    grid-area: bottom-right;
+    position: relative;
+    z-index: 1;
+    align-self: end;
+    justify-self: end;
+    text-align: right;
+  }
+  #title .title-phrases {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    font-family: var(--font-body);
+    font-size: var(--text-sm);
+    line-height: var(--leading-snug);
+  }
+  #title .title-phrases li.orange {
+    color: #f5a623;
+    font-weight: 600;
+  }
+  #title .title-phrases li.gray {
+    color: rgba(255,255,255,0.5);
+    font-weight: 400;
+  }
+  @media (max-width: 900px) {
+    #title .title-slide-wrap {
+      grid-template-columns: 1fr;
+      grid-template-rows: auto auto auto auto;
+      grid-template-areas:
+        "header"
+        "headline"
+        "bottom-left"
+        "bottom-right";
+      text-align: center;
+    }
+    #title .title-headline-block { max-width: none; }
+    #title .title-bottom-right { justify-self: center; text-align: center; }
+    #title .title-phrases { align-items: center; }
+  }
 </style>
 </head>
 <body>
 
-<div class="slide">
+<div id="deck">
+
+  <!-- Fixed radial overlay: above slide bg, below content (sibling of slide layers) -->
+  <div id="radial-overlay" class="radial-overlay" aria-hidden="true">
+    <div class="radial-overlay-inner">
+      <div class="radial-overlay-circle radial-overlay-circle-1"></div>
+      <div class="radial-overlay-circle radial-overlay-circle-2"></div>
+      <div class="radial-overlay-circle radial-overlay-circle-3"></div>
+      <div class="radial-overlay-circle radial-overlay-circle-4"></div>
+      <div class="radial-overlay-logo-wrap">
+        <img src="Grouped G Color.svg" width="253" height="253" alt="" class="radial-overlay-logo" />
+      </div>
+    </div>
+  </div>
+
+  <!-- 1. Title: bg layer (z-index 0) then content layer (z-index 2) -->
+  <div id="title-bg" class="title-slide-bg" aria-hidden="true"></div>
+  <section id="title" class="slide-section title-slide-content">
+    <div class="title-slide-wrap">
+      <header class="title-header">
+        <div class="title-brand">
+          <div class="title-logo">G</div>
+          <span class="title-name">Grouped</span>
+        </div>
+        <span class="title-proprietary">Proprietary & confidential</span>
+      </header>
+      <div class="title-headline-block">
+        <h1 class="title-headline">Turn every release into lasting fan relationships.</h1>
+      </div>
+      <div class="title-bottom-left">
+        <p class="title-sub">For artists who want to succeed and grow with every release. Own the moment between distribution and release day—build a direct channel that compounds.</p>
+      </div>
+      <div class="title-bottom-right">
+        <ul class="title-phrases">
+          <li class="orange">Own the first listen.</li>
+          <li class="orange">Capture real fan data.</li>
+          <li class="gray">Build direct channels that compound.</li>
+          <li class="orange">Grow with every release.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- 2. Problem set up: bg layer then content layer -->
+  <div id="problem-setup-bg" class="ps-slide-bg" aria-hidden="true"></div>
+  <section id="problem-setup" class="slide-section ps-slide-content">
+    <div class="ps-wrap">
+      <header class="ps-header">
+        <div class="ps-brand">
+          <div class="ps-logo-sm">G</div>
+          <span class="ps-name">Grouped · Firebird</span>
+        </div>
+        <span class="ps-label">Why it matters</span>
+      </header>
+
+      <div class="ps-content">
+        <h2 class="ps-headline">Artists are dependent on <span>platforms they don't control.</span></h2>
+        <p class="ps-sub">Release a song. Post about it on socials. Hope the algorithm picks it up. If it doesn't, start over. No compounding. No ownership. No relationship. Every release feels like starting from zero.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 3. Problem: bg layer (#0F1318) so overlay rings show above it -->
+  <div id="problem-bg" class="problem-slide-bg" aria-hidden="true"></div>
+  <section id="problem" class="slide-section">
+    <div class="slide">
   <div class="top-bar">
     <div class="brand">
       <div class="brand-dot">G</div>
@@ -346,15 +1186,14 @@
     <div class="sub">You're doing everything right — but you're not growing. Here's why.</div>
   </div>
 
-  <div class="content-area">
+  <div class="content-area problem-funnel-grid" id="funnelStack">
 
-    <!-- FUNNEL -->
-    <div class="funnel-outer">
-      <div class="funnel-sections-stack" id="funnelStack">
-
+    <!-- Row 1: Top of Funnel (Discovery) + matching panel -->
+    <div class="funnel-panel-row">
+      <div class="funnel-cell funnel-top">
         <div class="fsec" id="fsec-top" data-id="top">
-          <svg width="240" height="122" viewBox="0 0 240 122" fill="none">
-            <polygon points="20,0 220,0 187,119 53,119"
+          <svg width="240" height="100" viewBox="0 0 240 100" fill="none">
+            <polygon points="0,0 240,0 200,100 40,100"
               fill="rgba(245,166,35,0.11)" stroke="rgba(245,166,35,0.28)" stroke-width="1"/>
           </svg>
           <div class="inner-label">
@@ -362,34 +1201,8 @@
             <span class="tier-name">Discovery</span>
           </div>
         </div>
-
-        <div class="fsec" id="fsec-mid" data-id="mid">
-          <svg width="200" height="122" viewBox="0 0 200 122" fill="none">
-            <polygon points="16,0 184,0 155,119 45,119"
-              fill="rgba(245,166,35,0.08)" stroke="rgba(245,166,35,0.18)" stroke-width="1"/>
-          </svg>
-          <div class="inner-label">
-            <span class="tier-tag">Middle of Funnel</span>
-            <span class="tier-name">Reaching Fans</span>
-          </div>
-        </div>
-
-        <div class="fsec" id="fsec-bot" data-id="bot">
-          <svg width="162" height="122" viewBox="0 0 162 122" fill="none">
-            <polygon points="14,0 148,0 118,119 44,119"
-              fill="rgba(245,166,35,0.05)" stroke="rgba(245,166,35,0.11)" stroke-width="1"/>
-          </svg>
-          <div class="inner-label">
-            <span class="tier-tag">Bottom of Funnel</span>
-            <span class="tier-name">Community</span>
-          </div>
-        </div>
-
       </div>
-    </div>
-
-    <!-- PANELS -->
-    <div class="panels-wrap">
+      <div class="panel-cell">
 
       <!-- TOP -->
       <div class="panel" id="panel-top" data-id="top">
@@ -446,8 +1259,24 @@
           </div>
         </div>
       </div>
+      </div>
+    </div>
 
-      <!-- MID -->
+    <!-- Row 2: Middle of Funnel (Reaching Fans) + matching panel -->
+    <div class="funnel-panel-row">
+      <div class="funnel-cell funnel-mid">
+        <div class="fsec" id="fsec-mid" data-id="mid">
+          <svg width="200" height="100" viewBox="0 0 200 100" fill="none">
+            <polygon points="20,0 180,0 160,100 40,100"
+              fill="rgba(245,166,35,0.08)" stroke="rgba(245,166,35,0.18)" stroke-width="1"/>
+          </svg>
+          <div class="inner-label">
+            <span class="tier-tag">Middle of Funnel</span>
+            <span class="tier-name">Reaching Fans</span>
+          </div>
+        </div>
+      </div>
+      <div class="panel-cell">
       <div class="panel" id="panel-mid" data-id="mid">
         <div class="panel-header">
           <div class="panel-header-left">
@@ -502,8 +1331,24 @@
           </div>
         </div>
       </div>
+      </div>
+    </div>
 
-      <!-- BOT -->
+    <!-- Row 3: Bottom of Funnel (Community) + matching panel -->
+    <div class="funnel-panel-row">
+      <div class="funnel-cell funnel-bot">
+        <div class="fsec" id="fsec-bot" data-id="bot">
+          <svg width="162" height="100" viewBox="0 0 162 100" fill="none">
+            <polygon points="31,0 131,0 118,100 44,100"
+              fill="rgba(245,166,35,0.06)" stroke="rgba(245,166,35,0.14)" stroke-width="1"/>
+          </svg>
+          <div class="inner-label">
+            <span class="tier-tag">Bottom of Funnel</span>
+            <span class="tier-name">Community</span>
+          </div>
+        </div>
+      </div>
+      <div class="panel-cell">
       <div class="panel" id="panel-bot" data-id="bot">
         <div class="panel-header">
           <div class="panel-header-left">
@@ -558,22 +1403,227 @@
           </div>
         </div>
       </div>
-
-      <!-- KICKER -->
-      <div class="kicker" id="kicker">
-        <span class="kicker-text" id="kicker-text">You're doing everything right. The funnel is just working against you.</span>
-        <span class="kicker-sub" id="kicker-sub">That's where Grouped comes in.</span>
       </div>
-
     </div>
+
+    <!-- KICKER -->
+    <div class="kicker funnel-kicker-row" id="kicker">
+      <span class="kicker-text" id="kicker-text">You're doing everything right. The funnel is just working against you.</span>
+      <span class="kicker-sub" id="kicker-sub">That's where Grouped comes in.</span>
+    </div>
+
   </div>
+    </div>
+  </section>
+
+  <!-- 4. Solution -->
+  <section id="solution" class="slide-section">
+    <div class="slide slide-centered">
+      <div class="top-bar">
+        <div class="brand"><div class="brand-dot">G</div><span class="brand-name">Grouped · Firebird</span></div>
+        <span class="slide-label">The Solution</span>
+      </div>
+      <div class="headline-block">
+        <div class="headline">Turn releases into <span>moments that build momentum.</span></div>
+        <div class="sub">Instead of dropping music into the void, artists use Grouped to own the first listen, identify their real fans, and build a direct channel that compounds with every release. Distribution exists. Discovery exists. Grouped is the missing layer that converts discovery into owned engagement.</div>
+      </div>
+      <div class="value-list">
+        <div class="value-item">
+          <span class="value-num">Top</span>
+          <div><div class="value-title">Fan identification & data capture</div><div class="value-body">Smart Swaps: trade early access for contact info.</div></div>
+        </div>
+        <div class="value-item">
+          <span class="value-num">Middle</span>
+          <div><div class="value-title">Reach, nurture, reward</div><div class="value-body">Smart Feed, push notifications, email (coming), progressive profiling.</div></div>
+        </div>
+        <div class="value-item">
+          <span class="value-num">Bottom</span>
+          <div><div class="value-title">Deep community & monetization</div><div class="value-body">Groups, paid tiers, direct sales, listening parties.</div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 5. Benefits -->
+  <section id="benefits" class="slide-section">
+    <div class="slide slide-centered">
+      <div class="top-bar">
+        <div class="brand"><div class="brand-dot">G</div><span class="brand-name">Grouped · Firebird</span></div>
+        <span class="slide-label">Benefits</span>
+      </div>
+      <div class="headline-block">
+        <div class="headline">Own the first moment. <span>Build a home. Watch it compound.</span></div>
+        <div class="sub">Everything you need to turn releases into lasting fan momentum.</div>
+      </div>
+      <div class="value-list">
+        <div class="value-item">
+          <span class="value-num">1</span>
+          <div><div class="value-title">Own the first moment</div><div class="value-body">Gate your most powerful moment. Early access, unreleased tracks, or exclusive content, delivered to fans who actually care.</div></div>
+        </div>
+        <div class="value-item">
+          <span class="value-num">2</span>
+          <div><div class="value-title">Build a home, not a list</div><div class="value-body">Campaigns bring fans in. Your Group keeps them there. A home base for your most engaged listeners.</div></div>
+        </div>
+        <div class="value-item">
+          <span class="value-num">3</span>
+          <div><div class="value-title">Watch it compound</div><div class="value-body">Every release grows your fanbase. Every fan gets overdelivered to. Every connection makes the next release stronger.</div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 6. How it works – features -->
+  <section id="how-it-works-features" class="slide-section">
+    <div class="slide">
+      <div class="top-bar">
+        <div class="brand"><div class="brand-dot">G</div><span class="brand-name">Grouped · Firebird</span></div>
+        <span class="slide-label">How it works</span>
+      </div>
+      <div class="headline-block">
+        <div class="headline">Features that <span>turn asks into rewards.</span></div>
+        <div class="sub">Swap generic drops for real moments. Connect to everything you're already doing.</div>
+      </div>
+      <div class="feature-grid">
+        <div class="feature-item"><strong>Smart Swaps</strong> — Early access to music, email/phone collection, pre-saves, fan feedback, Spotify follows.</div>
+        <div class="feature-item"><strong>Smart Feed</strong> — Set-it-and-forget-it feed that auto-populates with your activity; push notifications, zero manual maintenance.</div>
+        <div class="feature-item"><strong>Progressive Fan Profiling</strong> — Every return captures more data; profiles sync to your existing CRMs.</div>
+        <div class="feature-item"><strong>Custom Email (coming)</strong> — Built-in email on a credit model; purpose-built for artists at a fraction of CRM cost.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 7. How it works – steps -->
+  <section id="how-it-works-steps" class="slide-section">
+    <div class="slide">
+      <div class="top-bar">
+        <div class="brand"><div class="brand-dot">G</div><span class="brand-name">Grouped · Firebird</span></div>
+        <span class="slide-label">How it works</span>
+      </div>
+      <div class="headline-block">
+        <div class="headline">Three steps to <span>momentum that compounds.</span></div>
+        <div class="sub">Customer-facing flow.</div>
+      </div>
+      <div class="step-list">
+        <div class="step-card">
+          <div class="step-num">1</div>
+          <div class="step-title">Launch with intention</div>
+          <div class="step-body">Create a release moment around your music. Early access, exclusive content, or something worth showing up for.</div>
+        </div>
+        <div class="step-card">
+          <div class="step-num">2</div>
+          <div class="step-title">Fans move closer automatically</div>
+          <div class="step-body">People who care opt in, explore, and stick around. The most engaged fans naturally become part of your Group.</div>
+        </div>
+        <div class="step-card">
+          <div class="step-num">3</div>
+          <div class="step-title">Momentum compounds</div>
+          <div class="step-body">Each release builds on the last. More fans show up, more connections deepen, and your audience grows without starting over.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 8. How we're different -->
+  <section id="how-were-different" class="slide-section">
+    <div class="slide slide-centered">
+      <div class="top-bar">
+        <div class="brand"><div class="brand-dot">G</div><span class="brand-name">Grouped · Firebird</span></div>
+        <span class="slide-label">How we're different</span>
+      </div>
+      <div class="headline-block">
+        <div class="headline">Win/win, not <span>extractive.</span></div>
+        <div class="sub">We turn every ask into a reward for fans, creating shared moments that stack over time. This isn't another superfan platform — it's for ALL of your fans. Getting them in one place. Enabling you to overdeliver.</div>
+      </div>
+      <div class="value-list">
+        <div class="value-item">
+          <span class="value-num">—</span>
+          <div><div class="value-title">Experience over widget</div><div class="value-body">Anyone can build a data capture widget. At Grouped we turn this into an experience for you and your fans.</div></div>
+        </div>
+        <div class="value-item">
+          <span class="value-num">—</span>
+          <div><div class="value-title">Fans first</div><div class="value-body">Unlocking early access in exchange for an email or pre-save is a no-brainer and a better fan experience. We don't paywall groups or create high cost barriers.</div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 9. Case studies / proof -->
+  <section id="case-studies" class="slide-section">
+    <div class="slide slide-centered">
+      <div class="top-bar">
+        <div class="brand"><div class="brand-dot">G</div><span class="brand-name">Grouped · Firebird</span></div>
+        <span class="slide-label">Proof</span>
+      </div>
+      <div class="headline-block">
+        <div class="headline">Built for artists who care about the <span>relationship, not the algorithm.</span></div>
+        <div class="sub">Traction from the combined Tribly + Grouped platform.</div>
+      </div>
+      <div class="stat-row">
+        <div class="stat-pill"><div class="num">4,500+</div><div class="lbl">Artists onboarded</div></div>
+        <div class="stat-pill"><div class="num">26.2%</div><div class="lbl">Activation rate</div></div>
+        <div class="stat-pill"><div class="num">16.53%</div><div class="lbl">Upgrade to Pro (product-led)</div></div>
+        <div class="stat-pill"><div class="num">30%</div><div class="lbl">MAU (mean)</div></div>
+      </div>
+      <div class="cta-block" style="margin-top:28px">
+        <div class="cta-line">Most powerful use case: Early Access</div>
+        <div class="cta-sub">Validated through user behavior. Artist testimonials and case studies coming soon.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 10. Our team -->
+  <section id="our-team" class="slide-section">
+    <div class="slide slide-centered">
+      <div class="top-bar">
+        <div class="brand"><div class="brand-dot">G</div><span class="brand-name">Grouped · Firebird</span></div>
+        <span class="slide-label">Our team</span>
+      </div>
+      <div class="headline-block">
+        <div class="headline">Tribly + Grouped. <span>Full funnel, one roof.</span></div>
+        <div class="sub">The merger brings together artist-side experience with engineering and platform expertise. Tribly: 4,500+ artists, proven swaps, strong unit economics. Grouped: community infrastructure, monetization tools, bottom-of-funnel engagement.</div>
+      </div>
+      <div class="feature-grid" style="margin-top:24px; grid-template-columns: 1fr 1fr;">
+        <div class="feature-item"><strong>Seth</strong> — CEO. Founder of Tribly. Musician, songwriter; built Tribly from the artist-side experience.</div>
+        <div class="feature-item"><strong>Ben</strong> — Engineering lead.</div>
+        <div class="feature-item"><strong>Lucy</strong> — Growth marketing.</div>
+        <div class="feature-item"><strong>Tim</strong> — Artist community. <strong>Steph</strong> — Customer success.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 11. CTA -->
+  <section id="cta" class="slide-section">
+    <div class="slide slide-centered">
+      <div class="top-bar">
+        <div class="brand"><div class="brand-dot">G</div><span class="brand-name">Grouped · Firebird</span></div>
+        <span class="slide-label">Get started</span>
+      </div>
+      <div class="headline-block">
+        <div class="headline">Your next release <span>doesn't have to disappear.</span></div>
+        <div class="sub">No label required. No hacks. Just you, your music, and fans who actually show up.</div>
+      </div>
+      <div class="cta-block">
+        <div class="cta-line">Ready to release?</div>
+        <div class="cta-sub">Join the movement. Start your next release with Grouped.</div>
+      </div>
+    </div>
+  </section>
+
 </div>
+
+<!-- Deck nav -->
+<nav class="deck-nav" id="deckNav" aria-label="Slide navigation">
+  <button type="button" class="nav-btn" id="navPrev" aria-label="Previous slide">←</button>
+  <div class="nav-dots" id="navDots"></div>
+  <span class="nav-counter" id="navCounter">1 / 11</span>
+  <button type="button" class="nav-btn" id="navNext" aria-label="Next slide">→</button>
+</nav>
 
 <script>
   const IDS = ['top', 'mid', 'bot'];
   const stack = document.getElementById('funnelStack');
 
-  // State
+  // State (accordion: only one panel expanded at a time)
   let hovered = null;   // currently mouse-hovered tier
   let locked  = null;   // currently expanded tier (stays active even on mouse-leave)
 
@@ -585,77 +1635,215 @@
 
   /* ── RENDER based on state ── */
   function render() {
+    if (!stack) return;
     const active = hovered || locked;
 
     // Funnel
     if (active) {
       stack.classList.add('has-hover');
       IDS.forEach(id => {
-        document.getElementById('fsec-' + id).classList.toggle('hovered', id === active);
+        const el = document.getElementById('fsec-' + id);
+        if (el) el.classList.toggle('hovered', id === active);
       });
     } else {
       stack.classList.remove('has-hover');
-      IDS.forEach(id => document.getElementById('fsec-' + id).classList.remove('hovered'));
+      IDS.forEach(id => {
+        const el = document.getElementById('fsec-' + id);
+        if (el) el.classList.remove('hovered');
+      });
     }
 
     // Panels
     IDS.forEach(id => {
       const panel = document.getElementById('panel-' + id);
-      panel.classList.remove('active', 'dimmed');
-      if (active) {
-        if (id === active) panel.classList.add('active');
-        else panel.classList.add('dimmed');
+      if (panel) {
+        panel.classList.remove('active', 'dimmed');
+        if (active) {
+          if (id === active) panel.classList.add('active');
+          else panel.classList.add('dimmed');
+        }
       }
     });
 
     // Kicker
     const kicker = document.getElementById('kicker');
-    if (active) {
-      document.getElementById('kicker-text').textContent = kickerCopy[active].text;
-      document.getElementById('kicker-sub').textContent = kickerCopy[active].sub;
-      kicker.classList.add('visible');
-    } else {
-      kicker.classList.remove('visible');
+    if (kicker) {
+      if (active) {
+        const textEl = document.getElementById('kicker-text');
+        const subEl = document.getElementById('kicker-sub');
+        if (textEl) textEl.textContent = kickerCopy[active].text;
+        if (subEl) subEl.textContent = kickerCopy[active].sub;
+        kicker.classList.add('visible');
+      } else {
+        kicker.classList.remove('visible');
+      }
     }
   }
 
   /* ── HOVER on funnel segments ── */
   IDS.forEach(id => {
     const fsec = document.getElementById('fsec-' + id);
-    fsec.addEventListener('mouseenter', () => { hovered = id; render(); });
-    fsec.addEventListener('mouseleave', () => { hovered = null; render(); });
+    if (fsec) {
+      fsec.addEventListener('mouseenter', () => { hovered = id; render(); });
+      fsec.addEventListener('mouseleave', () => { hovered = null; render(); });
+    }
   });
 
   /* ── HOVER on panels ── */
   IDS.forEach(id => {
     const panel = document.getElementById('panel-' + id);
-    panel.addEventListener('mouseenter', () => { hovered = id; render(); });
-    panel.addEventListener('mouseleave', () => { hovered = null; render(); });
+    if (panel) {
+      panel.addEventListener('mouseenter', () => { hovered = id; render(); });
+      panel.addEventListener('mouseleave', () => { hovered = null; render(); });
+    }
   });
 
-  /* ── PLUS button: click to expand/collapse, lock active ── */
-  IDS.forEach(id => {
-    const btn = document.getElementById('plus-' + id);
+  let toggleInProgress = false;
 
-    btn.addEventListener('click', (e) => {
-      e.stopPropagation();
-      const panel = document.getElementById('panel-' + id);
-      const isExpanded = panel.classList.contains('expanded');
+  function togglePanel(targetId) {
+    if (toggleInProgress) return;
+    toggleInProgress = true;
 
-      // Collapse all
-      IDS.forEach(s => document.getElementById('panel-' + s).classList.remove('expanded'));
+    const panel = document.getElementById('panel-' + targetId);
+    if (!panel) { toggleInProgress = false; return; }
+    const isExpanded = panel.classList.contains('expanded');
 
-      if (isExpanded) {
-        // Was expanded — collapse and unlock
-        locked = null;
-      } else {
-        // Expand this one and lock
-        panel.classList.add('expanded');
-        locked = id;
-      }
-      render();
+    // Accordion: collapse all, then expand only the clicked one (or none if closing)
+    IDS.forEach(s => {
+      const p = document.getElementById('panel-' + s);
+      if (p) p.classList.remove('expanded');
     });
+
+    if (!isExpanded) {
+      panel.classList.add('expanded');
+      locked = targetId;
+    } else {
+      locked = null;
+    }
+
+    render();
+    toggleInProgress = false;
+  }
+
+  /* ── Single delegated click handler: prevents duplicate fires, one panel only ── */
+  if (stack) {
+    stack.addEventListener('click', (e) => {
+      const panel = e.target.closest('.panel[id^="panel-"]');
+      if (!panel) return;
+      const id = panel.id.replace('panel-', '');
+      if (!IDS.includes(id)) return;
+      e.stopPropagation();
+      e.stopImmediatePropagation();
+      togglePanel(id);
+    }, true);
+  }
+
+  /* ── Deck navigation ── */
+  const deck = document.getElementById('deck');
+  const sections = Array.from(deck.querySelectorAll('.slide-section'));
+  const total = sections.length;
+  const navPrev = document.getElementById('navPrev');
+  const navNext = document.getElementById('navNext');
+  const navDots = document.getElementById('navDots');
+  const navCounter = document.getElementById('navCounter');
+
+  function getCurrentIndex() {
+    const scrollTop = deck.scrollTop;
+    const vh = deck.clientHeight;
+    let idx = 0;
+    for (let i = 0; i < sections.length; i++) {
+      if (sections[i].offsetTop + vh * 0.5 > scrollTop) {
+        idx = i;
+        break;
+      }
+      idx = i;
+    }
+    return idx;
+  }
+
+  const radialOverlay = document.getElementById('radial-overlay');
+
+  function updateNav() {
+    const i = getCurrentIndex();
+    navCounter.textContent = (i + 1) + ' / ' + total;
+    navDots.querySelectorAll('.nav-dot').forEach((dot, j) => {
+      dot.classList.toggle('active', j === i);
+    });
+    navPrev.disabled = i === 0;
+    navNext.disabled = i === total - 1;
+    if (radialOverlay) {
+      radialOverlay.classList.toggle('hidden', i >= 3);
+      /* on-slide-2 / on-slide-3 set by IntersectionObservers so animation ties to scroll */
+    }
+  }
+
+  function goToSlide(index) {
+    const i = Math.max(0, Math.min(index, total - 1));
+    sections[i].scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  for (let i = 0; i < total; i++) {
+    const dot = document.createElement('button');
+    dot.type = 'button';
+    dot.className = 'nav-dot' + (i === 0 ? ' active' : '');
+    dot.setAttribute('aria-label', 'Slide ' + (i + 1));
+    dot.addEventListener('click', () => goToSlide(i));
+    navDots.appendChild(dot);
+  }
+
+  navPrev.addEventListener('click', () => goToSlide(getCurrentIndex() - 1));
+  navNext.addEventListener('click', () => goToSlide(getCurrentIndex() + 1));
+
+  deck.addEventListener('scroll', () => {
+    if (deck.scrollEndTimer) clearTimeout(deck.scrollEndTimer);
+    deck.scrollEndTimer = setTimeout(updateNav, 80);
   });
+
+  /* Slide 2: rings 2x, G spins out */
+  const problemSetup = document.getElementById('problem-setup');
+  if (radialOverlay && problemSetup) {
+    const psObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.intersectionRatio > 0.12) {
+          radialOverlay.classList.add('on-slide-2');
+        } else {
+          radialOverlay.classList.remove('on-slide-2');
+        }
+      });
+    }, { root: deck, threshold: [0, 0.08, 0.12, 0.2] });
+    psObserver.observe(problemSetup);
+  }
+
+  /* Slide 3: rings expand to reveal; innermost circle #0F1318 becomes base */
+  const problemSection = document.getElementById('problem');
+  if (radialOverlay && problemSection) {
+    const problemObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.intersectionRatio > 0.15) {
+          radialOverlay.classList.add('on-slide-3');
+          radialOverlay.classList.remove('on-slide-2');
+        } else {
+          radialOverlay.classList.remove('on-slide-3');
+        }
+      });
+    }, { root: deck, threshold: [0, 0.1, 0.15, 0.25] });
+    problemObserver.observe(problemSection);
+  }
+
+  document.addEventListener('keydown', (e) => {
+    const target = e.target;
+    if (target.closest('button') || target.closest('input') || target.closest('textarea')) return;
+    const i = getCurrentIndex();
+    if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
+      e.preventDefault();
+      goToSlide(i + 1);
+    } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+      e.preventDefault();
+      goToSlide(i - 1);
+    }
+  });
+
+  updateNav();
 </script>
 
 </body>
