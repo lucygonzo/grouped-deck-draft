@@ -677,6 +677,25 @@
 
   @media (max-width: 900px) {
     #problem-setup .ps-content { max-width: none; padding-left: 16px; padding-right: 16px; }
+    /* Problem slide: stack funnel and panels vertically on mobile */
+    #problem .problem-funnel-grid {
+      grid-template-columns: 1fr;
+      grid-template-rows: auto auto auto auto;
+      gap: 16px;
+    }
+    #problem .funnel-cell {
+      min-height: auto;
+      padding: 20px 0;
+    }
+    #problem .funnel-cell .fsec {
+      max-width: 200px;
+    }
+    #problem .panel-cell {
+      min-height: auto;
+    }
+    #problem .slide {
+      padding: 32px 24px 40px;
+    }
   }
 
   /* Simple content slides */
@@ -1727,11 +1746,16 @@
 
   /* ── Single delegated click handler: prevents duplicate fires, one panel only ── */
   if (stack) {
+    // Use capture phase to intercept before other handlers
     stack.addEventListener('click', (e) => {
       const panel = e.target.closest('.panel[id^="panel-"]');
       if (!panel) return;
       const id = panel.id.replace('panel-', '');
       if (!IDS.includes(id)) return;
+      
+      // Skip if clicking inside interactive elements (links, buttons in body)
+      if (e.target.closest('a, button:not(.plus-btn), input')) return;
+      
       e.stopPropagation();
       e.stopImmediatePropagation();
       togglePanel(id);
